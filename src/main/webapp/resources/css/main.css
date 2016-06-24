@@ -1,0 +1,26 @@
+body {
+	background: teal;
+	width: 99%;
+}
+
+.navbartop {
+	position: fixed;
+	width: 99%;
+	margin: 0 auto;
+	z-index: 1000;
+	top: 10px;
+} 
+
+.corps {
+	margin-top: 68px;
+}
+
+.footer {
+	margin-top: 50px;
+}
+
+.destroyButton {
+	margin: 0 auto;
+	width: 200px;
+	display: block;
+}

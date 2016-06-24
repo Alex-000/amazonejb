@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" >
+	
+<h:head>
+<meta charset="utf-8"></meta>
+<!-- <link rel="stylesheet" -->
+<!-- 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"></link> -->
+	<link rel="stylesheet" href="#{facesContext.externalContext.request.contextPath}/resources/css/main.css"></link>
+</h:head>
+
+<h:body>
+
+	<div class="navbartop">
+		<ui:include src="template/navbartop.xhtml" />
+	</div>
+	
+<!-- 	<div class="navbarleft"> -->
+<!-- 		<ui:include src="template/navbarleft.xhtml" /> -->
+<!-- 	</div> -->
+	
+	<div class="corps">
+	
+		<ui:insert name="client-list" />
+		
+		
+		
+		<div class="footer">
+			<ui:include src="template/footer.xhtml" />
+		</div>
+		
+	</div>
+	
+
+</h:body>
+
+</html>

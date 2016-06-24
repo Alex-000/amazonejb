@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="../index.xhtml">
+
+	<ui:define name="client-list">
+
+
+		<div class="container">
+		<h1>Formulaire</h1>
+			<h:form>
+
+					<h:inputHidden value="#{clientManagedBean.client.id}" />
+
+					<div class="form-group">
+						<label for="nom">Nom</label>
+						<h:inputText name="nom"
+							value="#{clientManagedBean.client.nom}" />
+					</div>
+					<div class="form-group">
+						<label for="prenom">Prenom</label>
+						<h:inputText name="prenom"
+							value="#{clientManagedBean.client.prenom}" />
+					</div>
+					<div class="form-group">
+						<label for="dateDeNaissance">Date de naissance</label>
+						<h:inputText name="dateDeNaissance"
+							value="#{clientManagedBean.client.dateNaissance}">
+							<f:convertDateTime pattern="dd/MM/yyyy" timeZone="CET" />
+						</h:inputText>
+					</div>
+
+					<h:commandButton action="#{clientManagedBean.create()}"
+						value="Envoyer" />
+
+				</h:form>
+		</div>
+
+	</ui:define>
+</ui:composition>
