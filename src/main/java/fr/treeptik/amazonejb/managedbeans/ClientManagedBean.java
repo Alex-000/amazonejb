@@ -69,7 +69,7 @@ public class ClientManagedBean {
 		
 		clientService.remove(client);
 		
-		System.out.println("je suis dans remove ========================================= " + nom);
+		System.out.println("je suis dans remove ========================================== " + nom);
 		addMessage("Client " + nom + " deleted !");
 		
 		//return "/client/client-list";
