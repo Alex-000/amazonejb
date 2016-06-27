@@ -12,6 +12,10 @@
 		<param-name>primefaces.THEME</param-name>
 		<param-value>trontastic</param-value>
 	</context-param>
+	<context-param>
+	    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+	    <param-value>true</param-value>
+	</context-param>
 	<welcome-file-list>
 		<welcome-file>/index.jsf</welcome-file>
 	</welcome-file-list>
@@ -26,6 +30,16 @@
 	</servlet-mapping>
 	
 	
+	<security-constraint>
+        <web-resource-collection>
+            <web-resource-name>secure-pages</web-resource-name>
+            <url-pattern>/admin/*</url-pattern> 
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>ROLE_ADMIN</role-name>
+        </auth-constraint>
+    </security-constraint>
+    
 	<security-constraint>
         <web-resource-collection>
             <web-resource-name>secure-pages</web-resource-name>

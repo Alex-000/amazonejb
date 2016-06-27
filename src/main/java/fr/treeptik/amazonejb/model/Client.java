@@ -1,10 +1,14 @@
 package fr.treeptik.amazonejb.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,6 +16,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import fr.treeptik.amazonejb.enumeration.RoleUser;
 
 @Entity
 public class Client implements Serializable {
@@ -36,14 +43,75 @@ public class Client implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dateNaissance;
 	
-	@OneToMany(mappedBy = "client")
+	@OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
 	private List<Commande> commandes;
 
-	@ManyToMany
-	private List<Role> roles;
+	@ManyToMany(fetch = FetchType.LAZY)
+	private Set<Role> roles;
+	
+	@Transient
+	private List<Role> rolesToDisplay;
+	
 	
 	
 	public Client() {
+		// constructeur vide
+	}
+	
+	
+	public boolean hasRole(RoleUser role) {
+		
+		for (Role r : roles) {
+			if (r.getRole().equals(role.name())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasRole(String role) {
+		
+		for (Role r : roles) {
+			if (r.getRole().equals(role)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Role getRole(RoleUser role) {
+		
+		for (Role r : roles) {
+			if (r.getRole().equals(role.name())) {
+				return r;
+			}
+		}
+		return null;
+	}
+	
+	public void addRole(Role role) {
+		
+		if (this.roles == null) {
+			this.roles = new HashSet<>();
+		}
+		if (!hasRole(role.getRole())) {
+			this.roles.add(role);
+		}
+		
+	}
+	
+	public void removeRole(Role role) {
+		
+		if (this.roles != null) {
+			this.roles.remove(role);
+		}
+	}
+	
+	public void removeRole(RoleUser role) {
+		
+		if (this.roles != null && !this.roles.isEmpty()) {
+			this.roles.remove(getRole(role));
+		}
 	}
 
 
@@ -117,13 +185,26 @@ public class Client implements Serializable {
 	}
 
 
-	public List<Role> getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
 
-	public void setRoles(List<Role> roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
+	}
+
+
+	public List<Role> getRolesToDisplay() {
+		if (this.roles != null) {
+			this.rolesToDisplay = new ArrayList<>(this.roles);
+		}
+		return this.rolesToDisplay;
+	}
+
+
+	public void setRolesToDisplay(List<Role> rolesToDisplay) {
+		this.rolesToDisplay = rolesToDisplay;
 	}
 
 
@@ -132,4 +213,12 @@ public class Client implements Serializable {
 	}
 
 
+	@Override
+	public String toString() {
+		return "Client [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", login=" + login + ", password="
+				+ password + ", dateNaissance=" + dateNaissance + "]";
+	}
+
+
+	
 }

@@ -1,24 +1,20 @@
 package fr.treeptik.amazonejb.managedbeans;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.ListDataModel;
 
-import org.primefaces.context.RequestContext;
+import org.jboss.logging.Logger;
 
 import fr.treeptik.amazonejb.model.Client;
 import fr.treeptik.amazonejb.service.ClientService;
 
 @ManagedBean
-@RequestScoped
+@ViewScoped
 public class ClientManagedBean {
 
 	@EJB
@@ -27,16 +23,22 @@ public class ClientManagedBean {
 	private Client client = new Client();
 	
 	private ListDataModel<Client> clients = new ListDataModel<>();
+	
+	private boolean admin;
+	
+	private static final Logger logger = Logger.getLogger(ClientManagedBean.class);
 
 	
 	
-	public String create() {
+	public void create() {
+		
+		logger.info("========================================= Dans create car id ===> " + client.getId());
 		
 		clientService.add(client);
 		
-		RequestContext.getCurrentInstance().closeDialog(0);
+		// RequestContext.getCurrentInstance().closeDialog(0);
 		
-		return "/client/client-list";
+		// return "/client/client-list";
 	}
 	
 	
@@ -44,7 +46,7 @@ public class ClientManagedBean {
 				
 		//client = clients.getRowData();
 		
-		System.out.println("je suis dans update ========================================= " + client.getId());
+		logger.info("========================================= Dans update car id ===>" + client.getId());
 		
 		clientService.update(client);
 //		Map<String,Object> options = new HashMap<>();
@@ -61,24 +63,33 @@ public class ClientManagedBean {
 		//return "/client/client";
 	}
 	
+	public void updateRole() {
+		
+		logger.info("====================== dans updateRole =================================== admin ==> " + admin + " <== pour id client ==> " + client.getId());
+		
+		clientService.updateRoleAdminByIdClient(admin, client.getId());
+	}
+	
 	
 	public void remove() {
 		
 		client = clients.getRowData();
 		String nom = client.getNom();
+		String prenom = client.getPrenom();
 		
 		clientService.remove(client);
 		
-		System.out.println("je suis dans remove ========================================== " + nom);
-		addMessage("Client " + nom + " deleted !");
+		logger.info("je suis dans remove ========================================== " + nom);
+		
+		addMessage("Client deleted !", "Bye bye " + nom + " " + prenom);
 		
 		//return "/client/client-list";
 	}
 	
 	
 	
-	public void addMessage(String summary) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary,  null);
+	public void addMessage(String titre, String detail) {
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, titre,  detail);
         FacesContext.getCurrentInstance().addMessage("test", message);
     }
 	
@@ -104,6 +115,16 @@ public class ClientManagedBean {
 
 	public void setClients(ListDataModel<Client> clients) {
 		this.clients = clients;
+	}
+
+
+	public boolean isAdmin() {
+		return admin;
+	}
+
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
 	}
 	
 }

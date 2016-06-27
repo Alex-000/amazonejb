@@ -9,15 +9,6 @@
     <p:growl id="messages"/>
  
     <p:menubar>
-        <p:submenu label="Client" icon="ui-icon-document">
-            <p:submenu label="Trouver" icon="ui-icon-contact">
-                <p:menuitem value="Tous" url="/client/client-list.jsf" />
-                <p:menuitem value="Par nom" url="#" />
-            </p:submenu>
-            <p:menuitem value="Open" url="#" />
-            <p:separator />
-            <p:menuitem value="Quit" url="#" />
-        </p:submenu>
  
         <p:submenu label="Edit" icon="ui-icon-pencil">
             <p:menuitem value="Undo" url="#" icon="ui-icon-arrowreturnthick-1-w" />
@@ -43,11 +34,21 @@
                 <p:menuitem value="Delete" actionListener="#{menuView.delete}" icon="ui-icon-close" update="messages" ajax="false"/>
             </p:submenu>
         </p:submenu>
- 
-        <p:menuitem value="Quit" url="/logout.jsf" icon="ui-icon-close" />
         
+        <p:submenu rendered="#{facesContext.externalContext.isUserInRole('ROLE_ADMIN')}" label="Admin" icon="ui-icon-document">
+            <p:submenu label="Clients" icon="ui-icon-contact">
+                <p:menuitem value="Tous" url="/admin/client-list.jsf" />
+                <p:menuitem value="Par nom" url="#" />
+            </p:submenu>
+            <p:menuitem value="Open" url="#" />
+            <p:separator />
+            <p:menuitem value="Quit" url="#" />
+        </p:submenu>
+        
+        <p:menuitem value="Quit" url="/index.jsf" icon="ui-icon-close" title="Return to index" />
  
         <f:facet name="options">
+        	<p:outputLabel value="user : #{facesContext.externalContext.request.remoteUser}"/>
             <p:inputText style="margin-right:10px" placeholder="Search"/>
             <p:commandButton value="Logout" action="#{logoutManagedBean.logout()}" icon="ui-icon-extlink" />
         </f:facet>

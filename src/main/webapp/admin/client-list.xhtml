@@ -1,0 +1,180 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" template="../index.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	<ui:define name="client-list">
+
+
+		<div class="container">
+			
+<!-- 			Un seul form plusieur submit -->
+			<h:form id="formListClient">
+				
+	<!-- 			le modal de confirmation -->
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					<p:commandButton value="Yes" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+				
+<!-- 				ATTENTION : Bien qu'en commentaire html, jsf interprêtre les variables et peut causer des problèmes !!!!! -->
+<!--				Solution : ui remove ou dans web.xml ce que j'ai fait aussi -->
+<!-- 				<ui:remove> -->
+				<p:dialog header="Edition roles" widgetVar="roles-edit" modal="true" showEffect="puff" hideEffect="fade" resizable="false" dynamic="true">
+			            
+			            <h:inputHidden value="#{clientManagedBean.client.id}" />
+			            
+			            <h:panelGrid columns="2" cellpadding="5">
+			            
+				            <p:outputLabel for="admin" value="admin:" />
+				 			<p:inputSwitch id="admin" onLabel="Ok" offLabel="Ko" value="#{clientManagedBean.admin}" />
+				 			
+				            <f:facet name="footer">
+				 				<h:panelGroup style="display:block; text-align:center">
+				              		<p:commandButton value="Valider" update="formListClient" actionListener="#{clientManagedBean.updateRole()}" icon="ui-icon-check" />
+				              		<p:commandButton value="Cancel" immediate="true" oncomplete="PF('roles-edit').hide()" />
+				            	</h:panelGroup>
+				            </f:facet>
+				            
+			            </h:panelGrid>
+			            
+			    </p:dialog>
+<!-- 				</ui:remove> -->
+			    
+			    <p:dialog header="Edition Client" widgetVar="client-edit"  modal="true" showEffect="fade" hideEffect="puff" focus="login">
+			        
+<!-- 			        sinon on perd l'id meme avec l'inputext en disabled -->
+			        <h:inputHidden value="#{clientManagedBean.client.id}" />
+			        
+			        <h:panelGrid columns="2" cellpadding="5">
+			        
+			        	<h:outputLabel for="id" value="Id:" />
+			            <p:inputText id="id" label="id" disabled="true" value="#{clientManagedBean.client.id}" />
+			            
+			            <h:outputLabel for="login" value="Login:" />
+			            <p:inputText id="login" label="login" value="#{clientManagedBean.client.login}" />
+			            
+			            <h:outputLabel for="password" value="Password:" />
+			            <p:inputText id="password" label="password" value="#{clientManagedBean.client.password}" />
+			             
+			            <h:outputLabel for="nom" value="Nom:" />
+			            <p:inputText id="nom" label="nom" value="#{clientManagedBean.client.nom}" />
+			 
+			            <h:outputLabel for="prenom" value="Prenom:" />
+			            <p:inputText id="prenom" label="prenom" value="#{clientManagedBean.client.prenom}" />
+			 
+			            <h:outputLabel for="dateNaissance" value="Date de Naissance:" />
+			            <p:inputText id="dateNaissance" label="dateNaissance" value="#{clientManagedBean.client.dateNaissance}" >
+			            	<f:convertDateTime pattern="dd/MM/yyyy" timeZone="CET" />
+			            </p:inputText>
+			            
+			            <f:facet name="footer">
+			            	<h:panelGroup style="display:block; text-align:center">
+			                	<p:commandButton rendered="#{clientManagedBean.client.id != null}" actionListener="#{clientManagedBean.update()}" update="formListClient" value="Valider" icon="ui-icon-check" />
+<!-- 			                	<p:commandButton rendered="#{clientManagedBean.client.id == null}" actionListener="#{clientManagedBean.create()}" update="formListClient" value="Valider" icon="ui-icon-check" /> -->
+			                	<p:commandButton value="Cancel" immediate="true" oncomplete="PF('client-edit').hide()" />
+			                </h:panelGroup>
+			            </f:facet>
+            
+			        </h:panelGrid>
+			    </p:dialog>
+				
+	<!-- 				<p:growl id="growl" life="2000" /> -->
+				
+				
+<!-- 					draggableColumns="true" draggableRows="true" -->
+<!-- 					rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" -->
+<!--                          rowsPerPageTemplate="5,10,15" -->
+				<p:dataTable headerClass="header" styleClass="table table-striped"
+					value="#{clientManagedBean.clients}" var="client" >
+					 
+					<f:facet name="header">
+				           Client 
+				    </f:facet>
+				    
+				    <p:column headerText="Id" style="width:60px" sortBy="#{id}">
+						<h:outputText value="#{client.id}" />
+					</p:column>
+					
+					<p:column headerText="Login" sortBy="login">
+						<h:outputText value="#{client.login}" />
+					</p:column>
+					
+					<p:column headerText="Password">
+						<h:outputText value="#{client.password}" />
+					</p:column>
+					
+					<p:column headerText="Role User">
+						<h:outputText value="Yes" rendered="#{client.hasRole('ROLE_USER')}" />
+					</p:column>
+					
+					<p:column headerText="Role Admin">
+						
+						<h:outputText value="Yes" rendered="#{client.hasRole('ROLE_ADMIN')}" />
+						
+						<h:panelGroup>
+							<p:commandButton update="formListClient" rendered="#{client.hasRole('ROLE_ADMIN')}" oncomplete="PF('roles-edit').show()" icon="ui-icon-pencil" title="Edition roles">
+					            <f:setPropertyActionListener value="#{client.id}" target="#{clientManagedBean.client.id}" />
+					            <f:setPropertyActionListener value="#{true}" target="#{clientManagedBean.admin}" />
+					        </p:commandButton>
+					        <p:commandButton update="formListClient" rendered="#{not client.hasRole('ROLE_ADMIN')}" oncomplete="PF('roles-edit').show()" icon="ui-icon-pencil" title="Edition roles">
+					            <f:setPropertyActionListener value="#{client.id}" target="#{clientManagedBean.client.id}" />
+					            <f:setPropertyActionListener value="#{false}" target="#{clientManagedBean.admin}" />
+					        </p:commandButton>
+						</h:panelGroup>
+					</p:column>
+					
+					<p:column headerText="Nom" sortBy="nom">
+						<h:outputText value="#{client.nom}" />
+					</p:column>
+					
+					<p:column headerText="Prenom" sortBy="#prenom">
+						<h:outputText value="#{client.prenom}" />
+					</p:column>
+					
+					<p:column headerText="Date de naissance" sortBy="dateNaissance">
+						<h:outputText value="#{client.dateNaissance}" />
+					</p:column>
+	
+					
+			        
+					<p:column headerText="Action" style="width:100px;text-align: center">
+	
+	<!-- 					pour la boite de dialogue de confirmation -->
+						<p:growl id="message" showDetail="true" />
+								
+				             <p:commandButton update="formListClient" oncomplete="PF('client-edit').show()" icon="	ui-icon-pencil" title="Edition Client">
+				                <f:setPropertyActionListener value="#{client}" target="#{clientManagedBean.client}" />
+				            </p:commandButton>
+				       
+			        		
+						<p:commandButton actionListener="#{clientManagedBean.remove()}"
+								 update="message formListClient" icon="ui-icon-closethick">
+							<p:confirm header="Confirmation" message="Are you sure?"
+									icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+					
+					<f:facet name="footer">
+<!-- 						<p:commandButton value="Ajouter un client" id="withIcon" -->
+<!-- 							action="/admin/client.jsf" icon="ui-icon-disk" /> -->
+							
+						<p:commandButton update="formListClient" oncomplete="PF('client-edit').show()" value="Ajouter un client" icon="ui-icon-plusthick" title="Ajouter client">
+				            <f:setPropertyActionListener value="" target="#{clientManagedBean.client}" />
+				        </p:commandButton>
+					</f:facet>
+					
+				</p:dataTable>
+				
+					
+
+			</h:form>
+		</div>
+
+	</ui:define>
+</ui:composition>
