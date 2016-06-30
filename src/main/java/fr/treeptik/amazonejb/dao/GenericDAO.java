@@ -10,8 +10,9 @@ public interface GenericDAO<T> {
 	
 	T save(T entite) throws DAOException;
 	void remove(T entite) throws DAOException;
+	void removeSoft(T entite) throws DAOException;
 	T findById(Long id) throws DAOException;
 	List<T> find(T entite) throws DAOException;
-	List<T> findAll() throws DAOException;
+	List<T> findAll(boolean deleted) throws DAOException;
 	
 }

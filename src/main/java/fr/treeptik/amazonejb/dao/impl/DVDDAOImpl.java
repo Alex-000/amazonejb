@@ -45,6 +45,12 @@ public class DVDDAOImpl implements DVDDAO {
 		}
 		
 	}
+	
+	@Override
+	public void removeSoft(DVD entite) throws DAOException {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public DVD findById(Long id) throws DAOException {
@@ -69,13 +75,17 @@ public class DVDDAOImpl implements DVDDAO {
 	}
 
 	@Override
-	public List<DVD> findAll() throws DAOException {
+	public List<DVD> findAll(boolean deleted) throws DAOException {
 		
 		try {
-			return entityManager.createQuery("SELECT d FROM DVD d", DVD.class).getResultList();
+			TypedQuery<DVD> query = entityManager.createQuery("SELECT d FROM DVD d WHERE d.deleted = :deleted", DVD.class);
+			query.setParameter("deleted", deleted);
+			return query.getResultList();
 		} catch (PersistenceException e) {
 			throw new DAOException("Erreur DVDDAO findAll " + e.getMessage(), e);
 		}
 	}
+
+
 
 }

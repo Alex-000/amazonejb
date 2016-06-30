@@ -78,6 +78,13 @@ public class ClientDAOImpl implements ClientDAO {
 		}
 		
 	}
+	
+
+	@Override
+	public void removeSoft(Client entite) throws DAOException {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public Client findById(Long id) throws DAOException {
@@ -103,12 +110,14 @@ public class ClientDAOImpl implements ClientDAO {
 	}
 
 	@Override
-	public List<Client> findAll() throws DAOException {
+	public List<Client> findAll(boolean deleted) throws DAOException {
 		
 		logger.debug("================ Dans findAll de clientDAOImpl");
 		
 		try {
-			return entityManager.createQuery("SELECT DISTINCT c FROM Client c LEFT JOIN FETCH c.roles", Client.class).getResultList();
+			TypedQuery<Client> query = entityManager.createQuery("SELECT DISTINCT c FROM Client c LEFT JOIN FETCH c.roles WHERE c.deleted = :deleted", Client.class);
+			query.setParameter("deleted", deleted);
+			return query.getResultList();
 		} catch (PersistenceException e) {
 			throw new DAOException("Erreur ClientDAO findAll " + e.getMessage(), e);
 		}
@@ -127,6 +136,8 @@ public class ClientDAOImpl implements ClientDAO {
 			throw new DAOException("Erreur ClientDAO findWithRolesById " + e.getMessage(), e);
 		}
 	}
+
+
 
 
 }

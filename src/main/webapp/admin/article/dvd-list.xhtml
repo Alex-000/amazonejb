@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" template="../../index.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	<ui:define name="dvd-list">
+
+
+		<div class="container">
+		
+<!-- 		la bulle de message -->
+		<p:growl id="growl" showDetail="true" life="5000" /> 
+		
+		
+<!-- 		la modal d'édition et d'ajout -->
+			<p:dialog id="modalEditDvd" header="Edition Dvd" widgetVar="dvd-edit"  modal="true" showEffect="fade" hideEffect="puff">
+			
+				<h:form id="formEditdvd">
+			        
+<!-- 			        sinon on perd l'id meme avec l'inputext en disabled -->
+			        <h:inputHidden value="#{dVDManagedBean.dvd.id}" />
+			        
+			        <h:panelGrid columns="2" cellpadding="5">
+			        
+			        	<h:outputLabel for="id" value="Id:" />
+			            <p:inputText id="id" label="id" disabled="true" value="#{dVDManagedBean.dvd.id}" />
+			            
+			            <h:outputLabel for="genre" value="Genre:" />
+			            <p:inputText id="genre" label="genre" value="#{dVDManagedBean.dvd.genre}" autofocus="autofocus" />
+			            
+			            <h:outputLabel for="titre" value="Titre:" />
+			            <p:inputText id="titre" label="titre" value="#{dVDManagedBean.dvd.titre}" />
+			             
+			            <h:outputLabel for="stock" value="Stock:" />
+			            <p:inputText id="stock" label="stock" value="#{dVDManagedBean.dvd.stock}" />
+			 
+			            <h:outputLabel for="prix" value="Prix:" />
+			            <p:inputText id="prix" label="prix" value="#{dVDManagedBean.dvd.prix}" />
+			            
+			            <f:facet name="footer">
+			            	<h:panelGroup style="display:block; text-align:center">
+			                	<p:commandButton rendered="#{dVDManagedBean.dvd.id != null}" actionListener="#{dVDManagedBean.update()}" oncomplete="PF('dvd-edit').hide()" update=":formListDvd:dataTableDvd growl" value="Valider" icon="ui-icon-check" />
+			                	<p:commandButton rendered="#{dVDManagedBean.dvd.id == null}" actionListener="#{dVDManagedBean.create()}" oncomplete="PF('dvd-edit').hide()" update=":formListDvd:dataTableDvd growl" value="Valider" icon="ui-icon-check" />
+			                	<p:commandButton value="Cancel" immediate="true" oncomplete="PF('dvd-edit').hide()" />
+			                </h:panelGroup>
+			            </f:facet>
+            
+			        </h:panelGrid>
+
+				</h:form>
+				
+		    </p:dialog>
+			
+			    
+			    
+			    
+		
+			<!-- 			Un seul form plusieur submit -->
+			<h:form id="formListDvd">
+				
+	<!-- 			le modal de confirmation -->
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					<p:commandButton value="Yes" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			    
+
+				
+	<!-- 				<p:growl id="growl" life="2000" /> -->
+				
+				
+<!-- 					draggableColumns="true" draggableRows="true" -->
+<!-- 					rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" -->
+<!--                          rowsPerPageTemplate="5,10,15" -->
+				<p:dataTable headerClass="header" styleClass="table table-striped" id="dataTableDvd"
+					value="#{dVDManagedBean.dvds}" var="dvd" >
+					 
+					<f:facet name="header">
+				           Dvd 
+				    </f:facet>
+				    
+				    <p:column headerText="Id" style="width:60px">
+						<h:outputText value="#{dvd.id}" />
+					</p:column>
+					
+					<p:column headerText="Genre">
+						<h:outputText value="#{dvd.genre}" />
+					</p:column>
+					
+					<p:column headerText="Titre">
+						<h:outputText value="#{dvd.titre}" />
+					</p:column>
+					
+					
+					<p:column headerText="Stock">
+						<h:outputText value="#{dvd.stock}" />
+					</p:column>
+					
+					<p:column headerText="Prix">
+						<h:outputText value="#{dvd.prix}" />
+					</p:column>
+					
+			        
+					<p:column headerText="Action" style="width:100px;text-align: center">
+								
+				             <p:commandButton update=":modalEditDvd" oncomplete="PF('dvd-edit').show()" icon="ui-icon-pencil" title="Edition Dvd">
+				                <f:setPropertyActionListener value="#{dvd}" target="#{dVDManagedBean.dvd}" />
+				            </p:commandButton>
+				       
+			        		
+						<p:commandButton actionListener="#{dVDManagedBean.remove()}"
+								 update=":formListDvd :growl" icon="ui-icon-closethick">
+							<p:confirm header="Confirmation" message="Are you sure?"
+									icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+					
+					<f:facet name="footer">
+						<p:commandButton update=":modalEditDvd" actionListener="#{dVDManagedBean.resetDvd()}" oncomplete="PF('dvd-edit').show()" value="Ajouter un dvd" icon="ui-icon-plusthick" title="Ajouter Dvd" />
+					</f:facet>
+					
+				</p:dataTable>
+				
+					
+
+			</h:form>
+		
+		
+		
+		
+		
+		
+		</div>
+
+	</ui:define>
+	
+</ui:composition>

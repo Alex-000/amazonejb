@@ -127,7 +127,7 @@ public class ClientServiceImpl implements ClientService {
 	public List<Client> findAll() throws ServiceException {
 		
 		try {
-			return clientDAO.findAll();
+			return clientDAO.findAll(false);
 		} catch (DAOException e) {
 			throw new ServiceException("Erreur ClientServiceImpl findAll " + e.getMessage(), e);
 		}

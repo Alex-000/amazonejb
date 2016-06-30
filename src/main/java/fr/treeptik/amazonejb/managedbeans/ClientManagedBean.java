@@ -1,11 +1,14 @@
 package fr.treeptik.amazonejb.managedbeans;
 
+import java.io.Serializable;
+
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
 import org.jboss.logging.Logger;
@@ -15,7 +18,12 @@ import fr.treeptik.amazonejb.service.ClientService;
 
 @ManagedBean
 @ViewScoped
-public class ClientManagedBean {
+public class ClientManagedBean implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@EJB
 	public ClientService clientService;
@@ -30,11 +38,26 @@ public class ClientManagedBean {
 
 	
 	
+	@PostConstruct
+	public void init() {
+		logger.info("\n========================================= Dans init ===> PostConstruct\n");
+		clients.setWrappedData(clientService.findAll());
+	}
+
+	
+	
+	public void resetClient() {
+		client = new Client();
+	}
+	
 	public void create() {
 		
-		logger.info("========================================= Dans create car id ===> " + client.getId());
+		logger.info("\n========================================= Dans create car id ===> " + client.getId() + "\n");
 		
 		clientService.add(client);
+		
+		// on remet à jour notre liste de clients
+		clients.setWrappedData(clientService.findAll());
 		
 		// RequestContext.getCurrentInstance().closeDialog(0);
 		
@@ -46,9 +69,13 @@ public class ClientManagedBean {
 				
 		//client = clients.getRowData();
 		
-		logger.info("========================================= Dans update car id ===>" + client.getId());
+		logger.info("\n========================================= Dans update car id ===>" + client.getId() + "\n");
 		
 		clientService.update(client);
+		
+		// on remet à jour notre liste de clients
+		clients.setWrappedData(clientService.findAll());
+				
 //		Map<String,Object> options = new HashMap<>();
 //        options.put("modal", true);
 //        options.put("width", 500);
@@ -63,25 +90,44 @@ public class ClientManagedBean {
 		//return "/client/client";
 	}
 	
-	public void updateRole() {
+	public void updateRole(ActionEvent event) {
 		
-		logger.info("====================== dans updateRole =================================== admin ==> " + admin + " <== pour id client ==> " + client.getId());
+		System.out.println(event.getComponent().getChildCount());
+		System.out.println(event.getComponent().getClientId());
+		System.out.println(event.getComponent().getFacetCount());
+		System.out.println(event.getComponent().getFamily());
+		System.out.println(event.getComponent().getId());
+		System.out.println(event.getComponent().getRendererType());
+		System.out.println(event.getComponent().getRendersChildren());
+		System.out.println(event.getComponent().getChildren());
+		System.out.println(event.getComponent().getClass());
+		System.out.println(event.getComponent().isInView());
+		System.out.println(event.getComponent().initialStateMarked());
+		System.out.println(event.getComponent().isRendered());
+		logger.info("\n====================== dans updateRole =================================== admin ==> " + admin + " <== pour id client ==> " + client.getId() + "\n");
 		
 		clientService.updateRoleAdminByIdClient(admin, client.getId());
+		
+		// on remet à jour notre liste de clients
+		clients.setWrappedData(clientService.findAll());
 	}
 	
 	
 	public void remove() {
 		
+		logger.info("\n========================================== je suis dans remove \n");
+
 		client = clients.getRowData();
 		String nom = client.getNom();
 		String prenom = client.getPrenom();
 		
 		clientService.remove(client);
 		
-		logger.info("je suis dans remove ========================================== " + nom);
 		
 		addMessage("Client deleted !", "Bye bye " + nom + " " + prenom);
+		
+		// on remet à jour notre liste de clients
+		clients.setWrappedData(clientService.findAll());
 		
 		//return "/client/client-list";
 	}
@@ -106,8 +152,6 @@ public class ClientManagedBean {
 
 
 	public ListDataModel<Client> getClients() {
-		
-		clients.setWrappedData(clientService.findAll());
 		return clients;
 	}
 

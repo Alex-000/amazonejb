@@ -35,12 +35,19 @@
             </p:submenu>
         </p:submenu>
         
-        <p:submenu rendered="#{facesContext.externalContext.isUserInRole('ROLE_ADMIN')}" label="Admin" icon="ui-icon-document">
+        <p:submenu rendered="#{facesContext.externalContext.isUserInRole('ROLE_ADMIN')}" label="Admin" icon="ui-icon-gear">
             <p:submenu label="Clients" icon="ui-icon-contact">
                 <p:menuitem value="Tous" url="/admin/client-list.jsf" />
                 <p:menuitem value="Par nom" url="#" />
             </p:submenu>
-            <p:menuitem value="Open" url="#" />
+            <p:submenu label="Articles" icon="ui-icon-cart">
+                <p:menuitem value="Tous" url="/admin/article-list.jsf" />
+                <p:submenu label="Type" icon="ui-icon-disk">
+	                <p:menuitem value="Livre" url="/admin/article/livre-list.jsf" />
+	                <p:menuitem value="CD" url="/admin/article/cd-list.jsf" />
+	                <p:menuitem value="DVD" url="/admin/article/dvd-list.jsf" />
+	            </p:submenu>
+            </p:submenu>
             <p:separator />
             <p:menuitem value="Quit" url="#" />
         </p:submenu>

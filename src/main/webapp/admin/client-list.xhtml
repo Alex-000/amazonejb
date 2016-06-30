@@ -11,22 +11,16 @@
 
 		<div class="container">
 			
-<!-- 			Un seul form plusieur submit -->
-			<h:form id="formListClient">
-				
-	<!-- 			le modal de confirmation -->
-				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-					<p:commandButton value="Yes" type="button"
-							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-					<p:commandButton value="No" type="button"
-							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-				</p:confirmDialog>
-				
+			
+			
+			
+			
 <!-- 				ATTENTION : Bien qu'en commentaire html, jsf interprêtre les variables et peut causer des problèmes !!!!! -->
 <!--				Solution : ui remove ou dans web.xml ce que j'ai fait aussi -->
 <!-- 				<ui:remove> -->
-				<p:dialog header="Edition roles" widgetVar="roles-edit" modal="true" showEffect="puff" hideEffect="fade" resizable="false" dynamic="true">
+				<p:dialog id="modalEditRole" header="Edition roles" widgetVar="roles-edit" modal="true" showEffect="puff" hideEffect="fade" resizable="false" dynamic="true">
 			            
+			<h:form id="formEditRole">
 			            <h:inputHidden value="#{clientManagedBean.client.id}" />
 			            
 			            <h:panelGrid columns="2" cellpadding="5">
@@ -36,17 +30,23 @@
 				 			
 				            <f:facet name="footer">
 				 				<h:panelGroup style="display:block; text-align:center">
-				              		<p:commandButton value="Valider" update="formListClient" actionListener="#{clientManagedBean.updateRole()}" icon="ui-icon-check" />
+				              		<p:commandButton value="Valider" update=":formListClient:dataTableClient" actionListener="#{clientManagedBean.updateRole}" oncomplete="PF('roles-edit').hide()" icon="ui-icon-check" />
 				              		<p:commandButton value="Cancel" immediate="true" oncomplete="PF('roles-edit').hide()" />
 				            	</h:panelGroup>
 				            </f:facet>
 				            
 			            </h:panelGrid>
 			            
+			</h:form>
 			    </p:dialog>
 <!-- 				</ui:remove> -->
-			    
-			    <p:dialog header="Edition Client" widgetVar="client-edit"  modal="true" showEffect="fade" hideEffect="puff" focus="login">
+			
+			
+			
+			
+			<h:form id="formEditClient">
+			
+				<p:dialog header="Edition Client" widgetVar="client-edit"  modal="true" showEffect="fade" hideEffect="puff" focus="login">
 			        
 <!-- 			        sinon on perd l'id meme avec l'inputext en disabled -->
 			        <h:inputHidden value="#{clientManagedBean.client.id}" />
@@ -75,14 +75,33 @@
 			            
 			            <f:facet name="footer">
 			            	<h:panelGroup style="display:block; text-align:center">
-			                	<p:commandButton rendered="#{clientManagedBean.client.id != null}" actionListener="#{clientManagedBean.update()}" update="formListClient" value="Valider" icon="ui-icon-check" />
-<!-- 			                	<p:commandButton rendered="#{clientManagedBean.client.id == null}" actionListener="#{clientManagedBean.create()}" update="formListClient" value="Valider" icon="ui-icon-check" /> -->
+			                	<p:commandButton rendered="#{clientManagedBean.client.id != null}" actionListener="#{clientManagedBean.update()}" oncomplete="PF('client-edit').hide()" update="formListClient" value="Valider" icon="ui-icon-check" />
+			                	<p:commandButton rendered="#{clientManagedBean.client.id == null}" actionListener="#{clientManagedBean.create()}" oncomplete="PF('client-edit').hide()" update="formListClient" value="Valider" icon="ui-icon-check" />
 			                	<p:commandButton value="Cancel" immediate="true" oncomplete="PF('client-edit').hide()" />
 			                </h:panelGroup>
 			            </f:facet>
             
 			        </h:panelGrid>
 			    </p:dialog>
+			
+			</h:form>
+			
+			
+			
+			
+			
+<!-- 			Un seul form plusieur submit -->
+			<h:form id="formListClient">
+				
+	<!-- 			le modal de confirmation -->
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					<p:commandButton value="Yes" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			    
+
 				
 	<!-- 				<p:growl id="growl" life="2000" /> -->
 				
@@ -90,7 +109,7 @@
 <!-- 					draggableColumns="true" draggableRows="true" -->
 <!-- 					rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" -->
 <!--                          rowsPerPageTemplate="5,10,15" -->
-				<p:dataTable headerClass="header" styleClass="table table-striped"
+				<p:dataTable headerClass="header" styleClass="table table-striped" id="dataTableClient"
 					value="#{clientManagedBean.clients}" var="client" >
 					 
 					<f:facet name="header">
@@ -118,11 +137,11 @@
 						<h:outputText value="Yes" rendered="#{client.hasRole('ROLE_ADMIN')}" />
 						
 						<h:panelGroup>
-							<p:commandButton update="formListClient" rendered="#{client.hasRole('ROLE_ADMIN')}" oncomplete="PF('roles-edit').show()" icon="ui-icon-pencil" title="Edition roles">
+							<p:commandButton  rendered="#{client.hasRole('ROLE_ADMIN')}" oncomplete="PF('roles-edit').show()" update="modalEditRole" icon="ui-icon-pencil" title="Edition roles">
 					            <f:setPropertyActionListener value="#{client.id}" target="#{clientManagedBean.client.id}" />
 					            <f:setPropertyActionListener value="#{true}" target="#{clientManagedBean.admin}" />
 					        </p:commandButton>
-					        <p:commandButton update="formListClient" rendered="#{not client.hasRole('ROLE_ADMIN')}" oncomplete="PF('roles-edit').show()" icon="ui-icon-pencil" title="Edition roles">
+					        <p:commandButton rendered="#{not client.hasRole('ROLE_ADMIN')}" oncomplete="PF('roles-edit').show()" update="modalEditRole" icon="ui-icon-pencil" title="Edition roles">
 					            <f:setPropertyActionListener value="#{client.id}" target="#{clientManagedBean.client.id}" />
 					            <f:setPropertyActionListener value="#{false}" target="#{clientManagedBean.admin}" />
 					        </p:commandButton>
@@ -148,13 +167,13 @@
 	<!-- 					pour la boite de dialogue de confirmation -->
 						<p:growl id="message" showDetail="true" />
 								
-				             <p:commandButton update="formListClient" oncomplete="PF('client-edit').show()" icon="	ui-icon-pencil" title="Edition Client">
+				             <p:commandButton update="formEditClient" oncomplete="PF('client-edit').show()" icon="	ui-icon-pencil" title="Edition Client">
 				                <f:setPropertyActionListener value="#{client}" target="#{clientManagedBean.client}" />
 				            </p:commandButton>
 				       
 			        		
 						<p:commandButton actionListener="#{clientManagedBean.remove()}"
-								 update="message formListClient" icon="ui-icon-closethick">
+								 update="formListClient" icon="ui-icon-closethick">
 							<p:confirm header="Confirmation" message="Are you sure?"
 									icon="ui-icon-alert" />
 						</p:commandButton>
@@ -164,9 +183,7 @@
 <!-- 						<p:commandButton value="Ajouter un client" id="withIcon" -->
 <!-- 							action="/admin/client.jsf" icon="ui-icon-disk" /> -->
 							
-						<p:commandButton update="formListClient" oncomplete="PF('client-edit').show()" value="Ajouter un client" icon="ui-icon-plusthick" title="Ajouter client">
-				            <f:setPropertyActionListener value="" target="#{clientManagedBean.client}" />
-				        </p:commandButton>
+						<p:commandButton update=":formEditClient" actionListener="#{clientManagedBean.resetClient()}" oncomplete="PF('client-edit').show()" value="Ajouter un client" icon="ui-icon-plusthick" title="Ajouter client" />
 					</f:facet>
 					
 				</p:dataTable>

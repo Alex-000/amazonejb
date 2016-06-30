@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -48,6 +49,9 @@ public class Client implements Serializable {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	private Set<Role> roles;
+	
+	@Column(nullable = false)
+	private boolean deleted;
 	
 	@Transient
 	private List<Role> rolesToDisplay;
@@ -217,6 +221,16 @@ public class Client implements Serializable {
 	public String toString() {
 		return "Client [id=" + id + ", nom=" + nom + ", prenom=" + prenom + ", login=" + login + ", password="
 				+ password + ", dateNaissance=" + dateNaissance + "]";
+	}
+
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 

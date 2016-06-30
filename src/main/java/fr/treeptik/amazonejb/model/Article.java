@@ -3,6 +3,7 @@ package fr.treeptik.amazonejb.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,8 +14,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Article implements Serializable {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+// si on veut préciser le nom et le type de la colonne DTYPE, normalement c'est mieux
+//@DiscriminatorColumn(name = "dtype", discriminatorType = DiscriminatorType.STRING)
+public class Article implements Serializable {
 
 	/**
 	 * 
@@ -22,7 +25,7 @@ public abstract class Article implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.TABLE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
 	private String titre;
@@ -35,6 +38,13 @@ public abstract class Article implements Serializable {
 	
 	@ManyToMany(mappedBy = "articles", fetch = FetchType.LAZY)
 	private List<Commande> commandes;
+	
+	@Column(nullable = false)
+	private boolean deleted;
+	
+	// permet d'avoir acces à DTYPE, par contre on ne le gere pas avec insert et update
+	@Column(name = "DTYPE", insertable = false, updatable = false)
+	private String dtype;
 
 	
 	
@@ -117,6 +127,39 @@ public abstract class Article implements Serializable {
 
 	public void setStock(Long stock) {
 		this.stock = stock;
+	}
+
+
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
+
+
+
+	public String getDtype() {
+		return dtype;
+	}
+
+
+
+	public void setDtype(String dtype) {
+		this.dtype = dtype;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "Article [id=" + id + ", titre=" + titre + ", prix=" + prix + ", genre=" + genre + ", stock=" + stock
+				+ ", deleted=" + deleted + ", dtype=" + dtype + "]";
 	}
 
 

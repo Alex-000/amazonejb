@@ -47,6 +47,12 @@ public class CDDAOImpl implements CDDAO {
 	}
 
 	@Override
+	public void removeSoft(CD entite) throws DAOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public CD findById(Long id) throws DAOException {
 		
 		try {			
@@ -69,13 +75,16 @@ public class CDDAOImpl implements CDDAO {
 	}
 
 	@Override
-	public List<CD> findAll() throws DAOException {
+	public List<CD> findAll(boolean deleted) throws DAOException {
 		
 		try {
-			return entityManager.createQuery("SELECT c FROM CD c", CD.class).getResultList();
+			TypedQuery<CD> query = entityManager.createQuery("SELECT c FROM CD c WHERE c.deleted = :deleted", CD.class);
+			query.setParameter("deleted", deleted);
+			return query.getResultList();
 		} catch (PersistenceException e) {
 			throw new DAOException("Erreur CDDAO findAll " + e.getMessage(), e);
 		}
 	}
+
 
 }

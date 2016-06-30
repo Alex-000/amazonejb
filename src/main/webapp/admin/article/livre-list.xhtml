@@ -1,0 +1,142 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" template="../../index.xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+	<ui:define name="livre-list">
+
+
+		<div class="container">
+		
+<!-- 		la bulle de message -->
+		<p:growl id="growl" showDetail="true" life="5000" /> 
+		
+		
+<!-- 		la modal d'édition et d'ajout -->
+			<p:dialog id="modalEditLivre" header="Edition Livre" widgetVar="livre-edit"  modal="true" showEffect="fade" hideEffect="puff">
+			
+				<h:form id="formEditlivre">
+			        
+<!-- 			        sinon on perd l'id meme avec l'inputext en disabled -->
+			        <h:inputHidden value="#{livreManagedBean.livre.id}" />
+			        
+			        <h:panelGrid columns="2" cellpadding="5">
+			        
+			        	<h:outputLabel for="id" value="Id:" />
+			            <p:inputText id="id" label="id" disabled="true" value="#{livreManagedBean.livre.id}" />
+			            
+			            <h:outputLabel for="genre" value="Genre:" />
+			            <p:inputText id="genre" label="genre" value="#{livreManagedBean.livre.genre}" autofocus="autofocus" />
+			            
+			            <h:outputLabel for="titre" value="Titre:" />
+			            <p:inputText id="titre" label="titre" value="#{livreManagedBean.livre.titre}" />
+			             
+			            <h:outputLabel for="stock" value="Stock:" />
+			            <p:inputText id="stock" label="stock" value="#{livreManagedBean.livre.stock}" />
+			 
+			            <h:outputLabel for="prix" value="Prix:" />
+			            <p:inputText id="prix" label="prix" value="#{livreManagedBean.livre.prix}" />
+			            
+			            <f:facet name="footer">
+			            	<h:panelGroup style="display:block; text-align:center">
+			                	<p:commandButton rendered="#{livreManagedBean.livre.id != null}" actionListener="#{livreManagedBean.update()}" oncomplete="PF('livre-edit').hide()" update=":formListLivre:dataTableLivre growl" value="Valider" icon="ui-icon-check" />
+			                	<p:commandButton rendered="#{livreManagedBean.livre.id == null}" actionListener="#{livreManagedBean.create()}" oncomplete="PF('livre-edit').hide()" update=":formListLivre:dataTableLivre growl" value="Valider" icon="ui-icon-check" />
+			                	<p:commandButton value="Cancel" immediate="true" oncomplete="PF('livre-edit').hide()" />
+			                </h:panelGroup>
+			            </f:facet>
+            
+			        </h:panelGrid>
+
+				</h:form>
+				
+		    </p:dialog>
+			
+			    
+			    
+			    
+		
+			<!-- 			Un seul form plusieur submit -->
+			<h:form id="formListLivre">
+				
+	<!-- 			le modal de confirmation -->
+				<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+					<p:commandButton value="Yes" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			    
+
+				
+	<!-- 				<p:growl id="growl" life="2000" /> -->
+				
+				
+<!-- 					draggableColumns="true" draggableRows="true" -->
+<!-- 					rows="10"  paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" -->
+<!--                          rowsPerPageTemplate="5,10,15" -->
+				<p:dataTable headerClass="header" styleClass="table table-striped" id="dataTableLivre"
+					value="#{livreManagedBean.livres}" var="livre" >
+					 
+					<f:facet name="header">
+				           Livre 
+				    </f:facet>
+				    
+				    <p:column headerText="Id" style="width:60px">
+						<h:outputText value="#{livre.id}" />
+					</p:column>
+					
+					<p:column headerText="Genre">
+						<h:outputText value="#{livre.genre}" />
+					</p:column>
+					
+					<p:column headerText="Titre">
+						<h:outputText value="#{livre.titre}" />
+					</p:column>
+					
+					
+					<p:column headerText="Stock">
+						<h:outputText value="#{livre.stock}" />
+					</p:column>
+					
+					<p:column headerText="Prix">
+						<h:outputText value="#{livre.prix}" />
+					</p:column>
+					
+			        
+					<p:column headerText="Action" style="width:100px;text-align: center">
+								
+				             <p:commandButton update=":modalEditLivre" oncomplete="PF('livre-edit').show()" icon="ui-icon-pencil" title="Edition Livre">
+				                <f:setPropertyActionListener value="#{livre}" target="#{livreManagedBean.livre}" />
+				            </p:commandButton>
+				       
+			        		
+						<p:commandButton actionListener="#{livreManagedBean.remove()}"
+								 update=":formListLivre :growl" icon="ui-icon-closethick">
+							<p:confirm header="Confirmation" message="Are you sure?"
+									icon="ui-icon-alert" />
+						</p:commandButton>
+					</p:column>
+					
+					<f:facet name="footer">
+						<p:commandButton update=":modalEditLivre" actionListener="#{livreManagedBean.resetLivre()}" oncomplete="PF('livre-edit').show()" value="Ajouter un livre" icon="ui-icon-plusthick" title="Ajouter Livre" />
+					</f:facet>
+					
+				</p:dataTable>
+				
+					
+
+			</h:form>
+		
+		
+		
+		
+		
+		
+		</div>
+
+	</ui:define>
+	
+</ui:composition>

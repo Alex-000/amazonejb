@@ -47,6 +47,12 @@ public class LivreDAOImpl implements LivreDAO {
 	}
 
 	@Override
+	public void removeSoft(Livre entite) throws DAOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public Livre findById(Long id) throws DAOException {
 		
 		try {			
@@ -69,13 +75,16 @@ public class LivreDAOImpl implements LivreDAO {
 	}
 
 	@Override
-	public List<Livre> findAll() throws DAOException {
+	public List<Livre> findAll(boolean deleted) throws DAOException {
 		
 		try {
-			return entityManager.createQuery("SELECT l FROM Livre l", Livre.class).getResultList();
+			TypedQuery<Livre> query = entityManager.createQuery("SELECT l FROM Livre l WHERE l.deleted = :deleted", Livre.class);
+			query.setParameter("deleted", deleted);
+			return query.getResultList();
 		} catch (PersistenceException e) {
 			throw new DAOException("Erreur LivreDAO findAll " + e.getMessage(), e);
 		}
 	}
+
 
 }

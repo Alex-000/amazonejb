@@ -47,6 +47,12 @@ public class CommandeDAOImpl implements CommandeDAO {
 	}
 
 	@Override
+	public void removeSoft(Commande entite) throws DAOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public Commande findById(Long id) throws DAOException {
 		
 		try {			
@@ -69,13 +75,16 @@ public class CommandeDAOImpl implements CommandeDAO {
 	}
 
 	@Override
-	public List<Commande> findAll() throws DAOException {
+	public List<Commande> findAll(boolean deleted) throws DAOException {
 		
 		try {
-			return entityManager.createQuery("SELECT c FROM Commande c", Commande.class).getResultList();
+			TypedQuery<Commande> query = entityManager.createQuery("SELECT c FROM Commande c WHERE c.deleted = :deleted", Commande.class);
+			query.setParameter("deleted", deleted);
+			return query.getResultList();
 		} catch (PersistenceException e) {
 			throw new DAOException("Erreur CommandeDAO findAll " + e.getMessage(), e);
 		}
 	}
+
 
 }

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,6 +43,8 @@ public class Commande implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Client client;
 
+	@Column(nullable = false)
+	private boolean deleted;
 	
 	
 	public Commande() {
@@ -123,6 +126,18 @@ public class Commande implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 }
